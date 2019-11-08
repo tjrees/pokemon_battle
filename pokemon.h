@@ -1,17 +1,31 @@
 #ifndef __POKEMON_H__
+#define __POKEMON_H__
 #include "pokemon_enums.h"
+#include "action.h"
 #include <string>
+#include <vector>
+
+class Ability;
+class Item;
+class Move;
 
 class Pokemon
 {
 public:
 
-	Pokemon(int name_in, int hp_in, int atk_in, int def_in, int spAtk_in, int spDef_in, int spd_in);
+	Pokemon(int name_in, int level_in, int hp_in, int atk_in, int def_in, int spAtk_in, int spDef_in, int spd_in);
 	~Pokemon();
 
 	std::string m_name;
-	Type m_type;
 	int m_level;
+	Gender m_gender;
+	Type m_type1;
+	Type m_type2;
+
+	Ability * m_ability;
+	Item * m_heldItem;
+
+	StatusEffect m_status;
 
 	// Base stats
 	int m_baseHp;
@@ -19,7 +33,7 @@ public:
 	int m_baseDef;
 	int m_baseSpAtk;
 	int m_baseSpDef;
-	int m_Spd;
+	int m_baseSpd;
 
 	// True stats
 	int m_maxHp;
@@ -31,19 +45,27 @@ public:
 	int m_spd;
 
 	// Stat stages
-	int m_atkStage = 0;
-	int m_defStage = 0;
-	int m_spAtkStage = 0;
-	int m_spDefStage = 0;
-	int m_spdStage = 0;
-	int m_accStage = 0;
-	int m_evaStage = 0;
+	int m_atkStage;
+	int m_defStage;
+	int m_spAtkStage;
+	int m_spDefStage;
+	int m_spdStage;
+	int m_accStage;
+	int m_evaStage;
+
+	// Moves
+	std::vector<Move *> m_moves;
 
 	void switchIn();
 	void switchOut();
 
 	int calcHp();
-	int calcStat();
+	int calcStat(int base);
+
+	bool learnMove(Move * learnedMove);
+	bool forgetMove(int idx);
+
+	void print();
 
 private:
 

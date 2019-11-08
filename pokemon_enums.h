@@ -1,35 +1,47 @@
 #ifndef __POKEMON_ENUMS_H__
+#define __POKEMON_ENUMS_H__
+#include <string>
 
-enum Type
+typedef enum Type
 {
-	Normal,
-	Grass,
-	Fire,
-	Water,
-	Electric,
-	Fighting,
-	Bug,
-	Psychic,
-	Ground,
-	Rock,
-	Flying,
-	Poison,
-	Ghost,
-	Ice,
-	Dragon,
-	Steel,
-	Dark,
-	Fairy,
-	NoneType // Used to fill the second type slot of single-typed Pokemon
-};
+	Normal = 0,
+	Fire = 1,
+	Water = 2,
+	Grass = 3,
+	Electric = 4,
+	Ice = 5,
+	Fighting = 6,
+	Poison = 7,
+	Ground = 8,
+	Flying = 9,
+	Psychic = 10,
+	Bug = 11,
+	Rock = 12,
+	Ghost = 13,
+	Dragon = 14,
+	Dark = 15,
+	Steel = 16,
+	Fairy = 17,
+	NoneType = 0xFF // Used to fill the second type slot of single-typed Pokemon
+} Type;
 
-enum ActionType
+std::string typeAsString(Type input);
+
+typedef enum ActionType
 {
-	Switch, // The trainer elects to switch the active Pokemon out of battle
-	Move // The trainer elects to use a move from the active Pokemon
-}
+	action_Switch, // The trainer elects to switch the active Pokemon out of battle
+	action_Move // The trainer elects to use a move from the active Pokemon
+} ActionType;
 
-enum Status
+typedef enum MoveType
+{
+	move_Status,
+	move_Attack
+} MoveType;
+
+std::string moveTypeAsString(MoveType input);
+
+typedef enum StatusEffect
 {
 	OK, // Default status effect
 	PAR, // Paralysis. Afflicted pokemon have speed cut to 1/4, and have a 1/4 chance to be fully paralyzed each turn.
@@ -38,12 +50,24 @@ enum Status
 	BRN, // Burn. Afflicted pokemon lose 1/8 of their max HP at the end each turn, and have their Attack stat reduced by half.
 	SLP, // Sleep. Afflicted pokemon are unable to move for 1 to 3 turns. This amount is determined randomly on switch-in and reset on switch-out.
 	FRZ // Freeze. Afflicted pokemon are unable to move, and have a 20% chance to thaw each turn. Fire type attacks used by either pokemon will thaw the FRZ condition.
-}
+} StatusEffect;
 
-enum PhysSpec
+std::string statusEffectAsString(StatusEffect input);
+
+typedef enum AttackType
 {
 	Physical,
 	Special
-}
+} AttackType;
+
+std::string attackTypeAsString(AttackType input);
+
+typedef enum Gender
+{
+	Male,
+	Female
+} Gender;
+
+std::string genderAsString(Gender input);
 
 #endif //__POKEMON_ENUMS_H__

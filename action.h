@@ -1,4 +1,6 @@
 #ifndef __ACTION_H__
+#define __ACTION_H__
+#include <string>
 #include "pokemon_enums.h"
 
 class Action
@@ -7,15 +9,18 @@ public:
 	ActionType m_actionType;
 	int priority; // Determines move order. Higher priority moves go first, with Pokemon speed as the tie breaker.
 
-	virtual void 
 };
 
 
 class Move : public Action
 {
 public:
+	std::string m_name;
 	Type m_type;
+	MoveType m_moveType;
 	int m_accuracy;
+
+	void print();
 
 };
 
@@ -29,8 +34,8 @@ public:
 class Attack : public Move
 {
 public:
-	PhysSpec m_physSpec; // Tells if the move is physical or special
-	int power;
+	AttackType m_attackType; // Tells if the move is physical or special
+	int m_power;
 
 };
 

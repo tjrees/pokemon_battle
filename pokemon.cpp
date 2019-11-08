@@ -6,15 +6,12 @@
 #include <iostream>
 
 // Constructor for the Pokemon class. Initializes base stats, calculates true stats, and fills health.
-Pokemon::Pokemon(int name_in, int level_in, int hp_in, int atk_in, int def_in, int spAtk_in, int spDef_in, int spd_in)
+Pokemon::Pokemon(std::string name_in, int level_in, Gender gender_in, Type type1_in, Type type2_in,
+	int hp_in, int atk_in, int def_in, int spAtk_in, int spDef_in, int spd_in) : 
+	m_name(name_in), m_level(level_in), m_gender(gender_in),
+	m_type1(type1_in), m_type2(type2_in), m_baseHp(hp_in), m_baseAtk(atk_in), 
+	m_baseDef(def_in), m_baseSpAtk(spAtk_in), m_baseSpDef(spDef_in), m_baseSpd(spd_in)
 {
-	this->m_baseHp = hp_in;
-	this->m_baseAtk = atk_in;
-	this->m_baseDef = def_in;
-	this->m_baseSpAtk = spAtk_in;
-	this->m_baseSpDef = spDef_in;
-	this->m_spd = spd_in;
-
 	this->m_maxHp = this->calcHp();
 	this->m_hp = this->m_maxHp;
 	this->m_atk = this->calcStat(this->m_baseAtk);
@@ -67,28 +64,18 @@ void Pokemon::switchOut()
 int Pokemon::calcHp()
 {
 	// TODO: Calculate with IVs, EVs
-	return std::floor(
-				(double(m_baseHp) + 31.0) * 2.0 + 
-				std::floor(
-					std::ceil(
-						std::sqrt(85.0) / 4.0
-					)
-				) * m_level
-			) + m_level + 10;
+	double numerator = (2.0 * double(m_baseHp) + 31.0 + std::floor(85.0 / 4.0)) * double(m_level);
+	int mainValue = std::floor(numerator / 100.0);
+	return (mainValue + m_level + 10);
 
 }
 
 int Pokemon::calcStat(int base)
 {
 	// TODO: Calculate with IVs, EVs
-	return std::floor(
-				(double(base) + 31.0) * 2.0 + 
-				std::floor(
-					std::ceil(
-						std::sqrt(85.0) / 4.0
-					)
-				) * m_level
-			) + 5;
+	double numerator = (2.0 * double(base) + 31.0 + std::floor(85.0 / 4.0)) * double(m_level);
+	int mainValue = std::floor(numerator / 100.0);
+	return (mainValue + 5);
 
 }
 
@@ -133,7 +120,7 @@ void Pokemon::print()
 	std::cout << "- - - - - - - - - - - - - - - - - - - -\n";
 	std::cout << m_name << "\n";
 
-	std::cout << genderAsString(m_gender) << " Lv " << m_level;
+	std::cout << genderAsString(m_gender) << " Lv " << m_level << "\n";
 
 	std::cout << typeAsString(m_type1);
 	if (m_type2 != NoneType)
@@ -152,16 +139,16 @@ void Pokemon::print()
 	}
 	std::cout << "\n";
 
-	std::cout << "Stats\n";
-	std::cout << "HP: " << m_hp << "/" << m_maxHp << "\n";
-	std::cout << "Attack: " << m_atk << "\n";
-	std::cout << "Defense: " << m_atk << "\n";
-	std::cout << "Special Attack: " << m_atk << "\n";
-	std::cout << "Special Defense: " << m_spDef << "\n";
+	std::cout << "Stats:\n";
+	std::cout << "HP: " << m_hp << "/" << m_maxHp << " | ";
+	std::cout << "Attack: " << m_atk << " | ";
+	std::cout << "Defense: " << m_def << " | ";
+	std::cout << "Special Attack: " << m_spAtk << " | ";
+	std::cout << "Special Defense: " << m_spDef << " | ";
 	std::cout << "Speed: " << m_spd << "\n";
 	std::cout << "\n";
 
-	std::cout << "Moves\n";
+	std::cout << "Moves:\n";
 	for(int i = 0; i < 4; i++)
 	{
 		if (m_moves[i] == nullptr)

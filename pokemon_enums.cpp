@@ -39,7 +39,7 @@ std::string typeAsString(Type input)
 			return "Steel";
 		case Fairy:
 			return "Fairy";
-		default:
+		default: // NoneType
 			return "";
 	}
 }
@@ -100,6 +100,29 @@ std::string genderAsString(Gender input)
 	else
 	{
 		return "Female";
+	}
+}
+
+std::string statAsString(Stat input)
+{
+	switch (input)
+	{
+		case HP:
+			return "HP";
+		case ATK:
+			return "Attack";
+		case DEF:
+			return "Defense";
+		case SPATK:
+			return "Special Attack";
+		case SPDEF:
+			return "Special Defense";
+		case SPD:
+			return "Speed";
+		case ACC:
+			return "Accuracy";
+		default: // EVA
+			return "Evasiveness";
 	}
 }
 

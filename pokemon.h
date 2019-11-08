@@ -13,8 +13,9 @@ class Pokemon
 {
 public:
 
-	Pokemon(int name_in, int level_in, int hp_in, int atk_in, int def_in, int spAtk_in, int spDef_in, int spd_in);
-	~Pokemon();
+	Pokemon(std::string name_in, int level_in, Gender gender_in, Type type1_in, Type type2_in, 
+		int hp_in, int atk_in, int def_in, int spAtk_in, int spDef_in, int spd_in);
+	virtual ~Pokemon();
 
 	std::string m_name;
 	int m_level;

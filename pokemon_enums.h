@@ -70,4 +70,18 @@ typedef enum Gender
 
 std::string genderAsString(Gender input);
 
+typedef enum Stat
+{
+	HP,
+	ATK,
+	DEF,
+	SPATK,
+	SPDEF,
+	SPD,
+	ACC,
+	EVA
+} Stat;
+
+std::string statAsString(Stat input);
+
 #endif //__POKEMON_ENUMS_H__

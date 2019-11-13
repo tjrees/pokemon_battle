@@ -2,6 +2,7 @@
 #include "team_build.h"
 #include "trainer.h"
 #include "pokemon.h"
+#include "battle.h"
 
 // Main function for executing this program
 int main()
@@ -23,6 +24,11 @@ int main()
 	{
 		trainer1->m_party[i]->print();
 	}
+
+	Battle * battle = new Battle();
+	battle->trainer0 = trainer0;
+	battle->trainer1 = trainer1;
+	battle->execute();
 
 	// Enter battle
 	// Announce winner

@@ -4,6 +4,7 @@
 #include <string>
 
 class Pokemon;
+class Action;
 
 class Trainer
 {
@@ -14,6 +15,12 @@ public:
 	std::string m_name;
 	std::vector<Pokemon*> m_party;
 	int m_activePokemon;
+	bool m_canBattle;
+
+	int choosePokemon();
+	Action * chooseAction();
+	int determineSpeed();
+	void checkHealth();
 
 
 private:

@@ -22,7 +22,7 @@ typedef enum Type
 	Dark = 15,
 	Steel = 16,
 	Fairy = 17,
-	NoneType = 0xFF // Used to fill the second type slot of single-typed Pokemon
+	NoneType = 18 // Used to fill the second type slot of single-typed Pokemon
 } Type;
 
 std::string typeAsString(Type input);
@@ -49,7 +49,8 @@ typedef enum StatusEffect
 	TOX, // Toxic poison. Starting at 1/16, afflicted pokemon lose health at an exponential rate, doubling the amount of damage each turn.
 	BRN, // Burn. Afflicted pokemon lose 1/8 of their max HP at the end each turn, and have their Attack stat reduced by half.
 	SLP, // Sleep. Afflicted pokemon are unable to move for 1 to 3 turns. This amount is determined randomly on switch-in and reset on switch-out.
-	FRZ // Freeze. Afflicted pokemon are unable to move, and have a 20% chance to thaw each turn. Fire type attacks used by either pokemon will thaw the FRZ condition.
+	FRZ, // Freeze. Afflicted pokemon are unable to move, and have a 20% chance to thaw each turn. Fire type attacks used by either pokemon will thaw the FRZ condition.
+	FNT // Faint. The pokemon's HP is 0, and cannot battle.
 } StatusEffect;
 
 std::string statusEffectAsString(StatusEffect input);

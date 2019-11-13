@@ -7,10 +7,12 @@
 
 // Constructor for the Pokemon class. Initializes base stats, calculates true stats, and fills health.
 Pokemon::Pokemon(std::string name_in, int level_in, Gender gender_in, Type type1_in, Type type2_in,
-	int hp_in, int atk_in, int def_in, int spAtk_in, int spDef_in, int spd_in) : 
+	Ability * ability_in, int hp_in, int atk_in, int def_in, int spAtk_in, int spDef_in, int spd_in) : 
 	m_name(name_in), m_level(level_in), m_gender(gender_in),
-	m_type1(type1_in), m_type2(type2_in), m_baseHp(hp_in), m_baseAtk(atk_in), 
-	m_baseDef(def_in), m_baseSpAtk(spAtk_in), m_baseSpDef(spDef_in), m_baseSpd(spd_in)
+	m_type1(type1_in), m_type2(type2_in), m_ability(ability_in), m_heldItem(nullptr), m_status(OK),
+	m_baseHp(hp_in), m_baseAtk(atk_in), m_baseDef(def_in), m_baseSpAtk(spAtk_in), 
+	m_baseSpDef(spDef_in), m_baseSpd(spd_in), m_atkStage(0), m_defStage(0), m_spAtkStage(0), 
+	m_spDefStage(0), m_spdStage(0), m_accStage(0), m_evaStage(0), m_trainer(nullptr), m_turnsIn(0)
 {
 	this->m_maxHp = this->calcHp();
 	this->m_hp = this->m_maxHp;
@@ -40,24 +42,6 @@ Pokemon::~Pokemon()
 		delete m_ability;
 		m_ability = nullptr;
 	}
-}
-
-// Switch in method
-void Pokemon::switchIn()
-{
-
-}
-
-// Switch out method. Resets stat stages
-void Pokemon::switchOut()
-{
-	m_atkStage = 0;
-	m_defStage = 0;
-	m_spAtkStage = 0;
-	m_spDefStage = 0;
-	m_spdStage = 0;
-	m_accStage = 0;
-	m_evaStage = 0;
 }
 
 // Calculates the pokemon's HP stat
@@ -115,10 +99,170 @@ bool Pokemon::forgetMove(int idx)
 	return true;
 }
 
+void Pokemon::onSwitchIn()
+{
+	m_turnsIn = 0;
+	if (m_ability != nullptr)
+	{
+		m_ability->onSwitchIn();
+	}
+	if (m_heldItem != nullptr)
+	{
+		m_heldItem->onSwitchIn();
+	}
+}
+
+void Pokemon::onSwitchOut()
+{
+	m_atkStage = 0;
+	m_defStage = 0;
+	m_spAtkStage = 0;
+	m_spDefStage = 0;
+	m_spdStage = 0;
+	m_accStage = 0;
+	m_evaStage = 0;
+
+	if (m_ability != nullptr)
+	{
+		m_ability->onSwitchOut();
+	}
+	if (m_heldItem != nullptr)
+	{
+		m_heldItem->onSwitchOut();
+	}
+}
+
+void Pokemon::onTurnBegin()
+{
+	if (m_ability != nullptr)
+	{
+		m_ability->onTurnBegin();
+	}
+	if (m_heldItem != nullptr)
+	{
+		m_heldItem->onTurnBegin();
+	}
+}
+
+void Pokemon::onTurnEnd()
+{
+	m_turnsIn++;
+	if (m_ability != nullptr)
+	{
+		m_ability->onTurnEnd();
+	}
+	if (m_heldItem != nullptr)
+	{
+		m_heldItem->onTurnEnd();
+	}
+}
+
+void Pokemon::onAttack(AttackResults * results)
+{
+	if (m_ability != nullptr)
+	{
+		m_ability->onAttack(results);
+	}
+	if (m_heldItem != nullptr)
+	{
+		m_heldItem->onAttack(results);
+	}
+}
+
+void Pokemon::onAttacked(AttackResults * results)
+{
+	if (m_ability != nullptr)
+	{
+		m_ability->onAttacked(results);
+	}
+	if (m_heldItem != nullptr)
+	{
+		m_heldItem->onAttacked(results);
+	}
+	// Calculate the total damage dealt by the attack
+	if (results->totalDamage == 0)
+	{
+		if (results->nullified)
+		{
+			results->totalDamage = 0;
+		}
+		else
+		{
+			results->totalDamage = 
+				std::round((results->effectiveness * results->stab * results->critical * 
+				results->additional * results->unmodifiedDamage * 
+				results->modifiedDamageNumerator) / 
+				results->modifiedDamageDenominator);;
+		}
+	}	
+	// Apply the damage from the attack
+	if (results->totalDamage >= m_hp)
+	{
+		m_hp = 0;
+		m_status = FNT;
+	}
+	else
+	{
+		m_hp -= results->totalDamage;
+	}
+}
+
+void Pokemon::onMakingContact(AttackResults * results)
+{
+	if (m_ability != nullptr)
+	{
+		m_ability->onMakingContact(results);
+	}
+	if (m_heldItem != nullptr)
+	{
+		m_heldItem->onMakingContact(results);
+	}
+}
+
+void Pokemon::onTakingContact(AttackResults * results)
+{
+	if (m_ability != nullptr)
+	{
+		m_ability->onTakingContact(results);
+	}
+	if (m_heldItem != nullptr)
+	{
+		m_heldItem->onTakingContact(results);
+	}
+}
+
+void Pokemon::onStatChange(AttackResults * results)
+{
+	if (m_ability != nullptr)
+	{
+		m_ability->onStatChange(results);
+	}
+	if (m_heldItem != nullptr)
+	{
+		m_heldItem->onStatChange(results);
+	}
+}
+
+bool Pokemon::ppAvailable()
+{
+	for (int i = 0; i < 4; i++)
+	{
+		if (m_moves[i] != nullptr)
+		{
+			if (m_moves[i]->m_PP > 0)
+			{
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+
 void Pokemon::print()
 {
 	std::cout << "- - - - - - - - - - - - - - - - - - - -\n";
-	std::cout << m_name << "\n";
+	std::cout << m_name << " | " << statusEffectAsString(m_status) << "\n";
 
 	std::cout << genderAsString(m_gender) << " Lv " << m_level << "\n";
 
@@ -162,4 +306,14 @@ void Pokemon::print()
 		}
 	}
 	std::cout << "- - - - - - - - - - - - - - - - - - - -\n";
+}
+
+// Alternate print statement that does not show your opponent your exact health or 
+void Pokemon::battlePrint()
+{
+	std::cout << "^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^\n";
+	std::cout << m_name << " | " << m_gender << " | Lv " << m_level << " | " << statusEffectAsString(m_status) << "\n";
+	double percentHP = (double) m_hp / (double) m_maxHp;
+	std::cout << "HP: " << percentHP * 100.0 << "%%\n";
+	std::cout << "^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^\n";
 }

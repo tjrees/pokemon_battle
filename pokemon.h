@@ -8,13 +8,14 @@
 class Ability;
 class Item;
 class Move;
+class Trainer;
 
 class Pokemon
 {
 public:
 
 	Pokemon(std::string name_in, int level_in, Gender gender_in, Type type1_in, Type type2_in, 
-		int hp_in, int atk_in, int def_in, int spAtk_in, int spDef_in, int spd_in);
+		Ability * ability_in, int hp_in, int atk_in, int def_in, int spAtk_in, int spDef_in, int spd_in);
 	virtual ~Pokemon();
 
 	std::string m_name;
@@ -57,8 +58,11 @@ public:
 	// Moves
 	std::vector<Move *> m_moves;
 
-	void switchIn();
-	void switchOut();
+	// Trainer
+	Trainer * m_trainer;
+
+	// Counts number of turns this pokemon has been switched in
+	int m_turnsIn;
 
 	int calcHp();
 	int calcStat(int base);
@@ -66,7 +70,19 @@ public:
 	bool learnMove(Move * learnedMove);
 	bool forgetMove(int idx);
 
+	void onSwitchIn();
+	void onSwitchOut();
+	void onTurnBegin();
+	void onTurnEnd();
+	void onAttack(AttackResults * results);
+	void onAttacked(AttackResults * results);
+	void onMakingContact(AttackResults * results);
+	void onTakingContact(AttackResults * results);
+	void onStatChange(AttackResults * results);
+	bool ppAvailable();
+
 	void print();
+	void battlePrint();
 
 private:
 

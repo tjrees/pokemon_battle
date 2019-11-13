@@ -30,6 +30,7 @@ Trainer * createTrainer(int trainerIdx)
 		result = charmander->learnMove(scratch);
 		result = charmander->learnMove(ember);
 		result = charmander->learnMove(metalClaw);
+		charmander->m_trainer = currentTrainer;
 		currentTrainer->m_party.push_back(charmander);
 	}
 	else
@@ -44,6 +45,7 @@ Trainer * createTrainer(int trainerIdx)
 		pikachu->learnMove(thunderShock);
 		pikachu->learnMove(tailWhip);
 		pikachu->learnMove(quickAttack);
+		pikachu->m_trainer = currentTrainer;
 		currentTrainer->m_party.push_back(pikachu);
 	}
 	return currentTrainer;

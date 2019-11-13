@@ -73,6 +73,8 @@ std::string statusEffectAsString(StatusEffect input)
 			return "SLP";
 		case FRZ:
 			return "FRZ";
+		case FNT:
+			return "FNT";
 		default:
 			return "OK";
 	}

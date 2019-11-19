@@ -94,6 +94,9 @@ struct AttackResults
 	int modifiedDamageDenominator; // Cleared for critical hits and certain abilities and items (e.g. Unaware)
 	int totalDamage;
 	bool nullified; // Set by the attacked pokemon if the ability or item nullifies the attack (e.g. Sap Sipper, Water Absorb)
+	bool contact;
+	AttackType attackType;
+
 
 	Pokemon * attacker;
 	Pokemon * defender;

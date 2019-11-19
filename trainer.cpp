@@ -128,7 +128,7 @@ Action * Trainer::chooseAction()
 			}
 			else
 			{
-				std::cout << ".\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n"; // Clear screen
+				std::cout << "\n"; // Clear screen
 				return (Action *) currentPokemon->m_moves[chosen];
 			}
 		}
@@ -148,23 +148,7 @@ int Trainer::determineSpeed()
 	{
 		return -1;
 	}
-	int initialSpeed = m_party[m_activePokemon]->m_spd;
-	int speedNumerator = 2;
-	int speedDenominator = 2;
-	if (m_party[m_activePokemon]->m_spdStage > 0)
-	{
-		speedNumerator += m_party[m_activePokemon]->m_spdStage;
-	}
-	else
-	{
-		speedDenominator -= m_party[m_activePokemon]->m_spdStage;
-	}
-	double speed =  ((double) initialSpeed * (double) speedNumerator) / (double) speedDenominator;
-	if (m_party[m_activePokemon]->m_status == PAR)
-	{
-		speed /= 4.0;
-	}
-	return speed;
+	return m_party[m_activePokemon]->determineSpeed();
 }
 
 void Trainer::checkHealth()

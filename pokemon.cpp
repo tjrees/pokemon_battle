@@ -155,10 +155,52 @@ void Pokemon::onTurnEnd()
 	{
 		m_heldItem->onTurnEnd();
 	}
+	int statusDamage = 0;
+	if (m_status == BRN || m_status == PSN)
+	{
+		statusDamage = m_maxHp / 8;
+	}
+	else if (m_status == TOX)
+	{
+		double toxDenominator = 16.0;
+		toxDenominator /= pow(2, m_turnsIn - 1);
+		statusDamage = m_maxHp / toxDenominator;
+	}
+	if (statusDamage != 0)
+	{
+		if (statusDamage >= m_hp)
+		{
+			statusDamage = m_hp;
+			m_hp = 0;
+		}
+		else
+		{
+			m_hp -= statusDamage;
+		}
+		std::cout << m_name << " was hurt by ";
+		if (m_status == BRN)
+		{
+			std::cout << "its burn! (";
+		}
+		else if (m_status == PSN || m_status == TOX)
+		{
+			std::cout << "poison! (";
+		}
+		std::cout << (((double) statusDamage) / ((double) m_maxHp) * 100.0) << "%%)\n";
+		if (m_hp == 0)
+		{
+			m_status = FNT;
+		}
+	}
 }
 
 void Pokemon::onAttack(AttackResults * results)
 {
+	// A burn status halves the afflicted pokemon's attack
+	if (m_status == BRN && results->attackType == Physical)
+	{
+		results->additional *= 0.5;
+	}
 	if (m_ability != nullptr)
 	{
 		m_ability->onAttack(results);
@@ -180,6 +222,10 @@ void Pokemon::onAttacked(AttackResults * results)
 		m_heldItem->onAttacked(results);
 	}
 	// Calculate the total damage dealt by the attack
+	if (results->critical > 1)
+	{
+		results->modifiedDamageDenominator = 2;
+	}
 	if (results->totalDamage == 0)
 	{
 		if (results->nullified)
@@ -198,6 +244,7 @@ void Pokemon::onAttacked(AttackResults * results)
 	// Apply the damage from the attack
 	if (results->totalDamage >= m_hp)
 	{
+		results->totalDamage = m_hp;
 		m_hp = 0;
 		m_status = FNT;
 	}
@@ -205,6 +252,7 @@ void Pokemon::onAttacked(AttackResults * results)
 	{
 		m_hp -= results->totalDamage;
 	}
+	std::cout << m_name << " lost " << (((double) results->totalDamage) / ((double) m_maxHp) * 100.0) << " percent of its health!\n";
 }
 
 void Pokemon::onMakingContact(AttackResults * results)
@@ -231,16 +279,172 @@ void Pokemon::onTakingContact(AttackResults * results)
 	}
 }
 
-void Pokemon::onStatChange(AttackResults * results)
+void Pokemon::onStatChange(Stat * statChanged, int * numStages, Pokemon * other)
 {
 	if (m_ability != nullptr)
 	{
-		m_ability->onStatChange(results);
+		m_ability->onStatChange(statChanged, numStages, other);
 	}
 	if (m_heldItem != nullptr)
 	{
-		m_heldItem->onStatChange(results);
+		m_heldItem->onStatChange(statChanged, numStages, other);
 	}
+	if (*numStages == 0)
+	{
+		return;
+	}
+	int * statPtr = nullptr;
+	switch (*statChanged)
+	{
+		case ATK:
+		{
+			statPtr = &m_atkStage;
+			break;
+		}
+		case DEF:
+		{
+			statPtr = &m_defStage;
+			break;
+		}
+		case SPATK:
+		{
+			statPtr = &m_spAtkStage;
+			break;
+		}
+		case SPDEF:
+		{
+			statPtr = &m_spDefStage;
+			break;
+		}
+		case SPD:
+		{
+			statPtr = &m_spdStage;
+			break;
+		}
+		case ACC:
+		{
+			statPtr = &m_accStage;
+			break;
+		}
+		case EVA:
+		{
+			statPtr = &m_evaStage;
+			break;
+		}
+		default:
+		{
+			statPtr = nullptr;
+		}
+	}
+	if (*numStages > 0)
+	{
+		if (*statPtr == 6)
+		{
+			std::cout << m_name << "'s " << statAsString(*statChanged) << " won't go higher!\n";
+			*numStages = 0;
+		}
+		else if (*statPtr + *numStages > 6)
+		{
+			*numStages = 6 - *statPtr;
+		}
+	}
+	else if (*numStages < 0)
+	{
+		if (*statPtr == -6)
+		{
+			std::cout << m_name << "'s " << statAsString(*statChanged) << " won't go lower!\n";
+			*numStages = 0;
+		}
+		else if (*statPtr + *numStages < -6)
+		{
+			*numStages = -6 - *statPtr;
+		}
+	}
+	// apply the stat change
+	*statPtr += *numStages;
+
+	if (*numStages == 0)
+	{
+		return;
+	}
+	if (*numStages == 1)
+	{
+		std::cout << m_name << "'s " << statAsString(*statChanged) << " rose!\n";
+	}
+	else if (*numStages == 2)
+	{
+		std::cout << m_name << "'s " << statAsString(*statChanged) << " sharply rose!\n";
+	}
+	else if (*numStages >= 3)
+	{
+		std::cout << m_name << "'s " << statAsString(*statChanged) << " drastically rose!\n";
+	}
+	else if (*numStages == -1)
+	{
+		std::cout << m_name << "'s " << statAsString(*statChanged) << " fell!\n";
+	}
+	else if (*numStages == -2)
+	{
+		std::cout << m_name << "'s " << statAsString(*statChanged) << " harshly fell!\n";
+	}
+	else if (*numStages <= -3)
+	{
+		std::cout << m_name << "'s " << statAsString(*statChanged) << " severely fell!\n";
+	}
+}
+
+void Pokemon::onStatusChange(StatusEffect * statusEffect, Pokemon * other)
+{
+	// Status effects do not stack
+	if (m_status != OK && *statusEffect != OK)
+	{
+		return;
+	}
+	if (m_ability != nullptr)
+	{
+		m_ability->onStatusChange(statusEffect, other);
+	}
+	if (m_heldItem != nullptr)
+	{
+		m_heldItem->onStatusChange(statusEffect, other);
+	}
+	if (m_status == *statusEffect) // Return if the status effect is nullified
+	{
+		return;
+	}
+	switch (*statusEffect)
+	{
+		case PAR:
+		{
+			std::cout << m_name << " was paralyzed!\n";
+			break;
+		}
+		case PSN:
+		{
+			std::cout << m_name << " was poisoned!\n";
+			break;
+		}
+		case TOX:
+		{
+			std::cout << m_name << " was badly poisoned\n";
+			break;
+		}
+		case BRN:
+		{
+			std::cout << m_name << " was burned!\n";
+			break;
+		}
+		case SLP:
+		{
+			std::cout << m_name << " went to sleep!\n";
+			break;
+		}
+		default:
+		{
+			std::cout << m_name << " was frozen solid!\n";
+		}
+	}
+	m_status = *statusEffect;
 }
 
 bool Pokemon::ppAvailable()
@@ -256,6 +460,26 @@ bool Pokemon::ppAvailable()
 		}
 	}
 	return false;
+}
+
+int Pokemon::determineSpeed()
+{
+	int speedNumerator = 2;
+	int speedDenominator = 2;
+	if (m_spdStage > 0)
+	{
+		speedNumerator += m_spdStage;
+	}
+	else
+	{
+		speedDenominator -= m_spdStage;
+	}
+	double speed =  ((double) m_spd * (double) speedNumerator) / (double) speedDenominator;
+	if (m_status == PAR)
+	{
+		speed /= 4.0;
+	}
+	return speed;
 }
 
 
@@ -297,12 +521,11 @@ void Pokemon::print()
 	{
 		if (m_moves[i] == nullptr)
 		{
-			std::cout << "---\n\n";
+			std::cout << "---\n";
 		}
 		else
 		{
 			m_moves[i]->print();
-			std::cout << "\n";
 		}
 	}
 	std::cout << "- - - - - - - - - - - - - - - - - - - -\n";
@@ -312,7 +535,7 @@ void Pokemon::print()
 void Pokemon::battlePrint()
 {
 	std::cout << "^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^\n";
-	std::cout << m_name << " | " << m_gender << " | Lv " << m_level << " | " << statusEffectAsString(m_status) << "\n";
+	std::cout << m_name << " | " << genderAsString(m_gender) << " | Lv " << m_level << " | " << statusEffectAsString(m_status) << "\n";
 	double percentHP = (double) m_hp / (double) m_maxHp;
 	std::cout << "HP: " << percentHP * 100.0 << "%%\n";
 	std::cout << "^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^\n";

@@ -78,8 +78,10 @@ public:
 	void onAttacked(AttackResults * results);
 	void onMakingContact(AttackResults * results);
 	void onTakingContact(AttackResults * results);
-	void onStatChange(AttackResults * results);
+	void onStatChange(Stat * statChanged, int * numStages, Pokemon * other);
+	void onStatusChange(StatusEffect * statusEffect, Pokemon * other);
 	bool ppAvailable();
+	int determineSpeed();
 
 	void print();
 	void battlePrint();

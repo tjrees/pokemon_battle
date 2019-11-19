@@ -1,5 +1,8 @@
 // move_library.cpp
 #include "move_library.h"
+#include "pokemon_enums.h"
+#include "pokemon.h"
+#include <cmath>
 
 // Struggle
 Struggle::Struggle()
@@ -18,7 +21,16 @@ ThunderShock::~ThunderShock() {}
 
 bool ThunderShock::checkValidity(Pokemon * defender) {return true;}
 void ThunderShock::primaryEffects(AttackResults * results) {}
-void ThunderShock::secondaryEffects(AttackResults * results) {}
+void ThunderShock::secondaryEffects(AttackResults * results)
+{
+	// 10% chance of causing paralysis
+	double chanceValue = (rand() % 100) + 1;
+	if (chanceValue <= 10)
+	{
+		StatusEffect paralysis = PAR;
+		results->defender->onStatusChange(&paralysis, results->attacker);
+	}
+}
 
 // Growl
 Growl::Growl()
@@ -27,7 +39,12 @@ Growl::Growl()
 Growl::~Growl() {}
 
 bool Growl::checkValidity(Pokemon * defender) {return true;}
-void Growl::primaryEffects(AttackResults * results) {}
+void Growl::primaryEffects(AttackResults * results) 
+{
+	Stat attack = ATK;
+	int numStages = -1;
+	results->defender->onStatChange(&attack, &numStages, results->attacker);
+}
 
 // TailWhip
 TailWhip::TailWhip()
@@ -36,7 +53,12 @@ TailWhip::TailWhip()
 TailWhip::~TailWhip() {}
 
 bool TailWhip::checkValidity(Pokemon * defender) {return true;}
-void TailWhip::primaryEffects(AttackResults * results) {}
+void TailWhip::primaryEffects(AttackResults * results) 
+{
+	Stat defense = DEF;
+	int numStages = -1;
+	results->defender->onStatChange(&defense, &numStages, results->attacker);
+}
 
 // QuickAttack
 QuickAttack::QuickAttack()
@@ -66,7 +88,16 @@ Ember::~Ember() {}
 
 bool Ember::checkValidity(Pokemon * defender) {return true;}
 void Ember::primaryEffects(AttackResults * results) {}
-void Ember::secondaryEffects(AttackResults * results) {}
+void Ember::secondaryEffects(AttackResults * results)
+{
+	// 10% chance of causing burn
+	double chanceValue = (rand() % 100) + 1;
+	if (chanceValue <= 10)
+	{
+		StatusEffect burn = BRN;
+		results->defender->onStatusChange(&burn, results->attacker);
+	}
+}
 
 // MetalClaw
 MetalClaw::MetalClaw()
@@ -76,4 +107,14 @@ MetalClaw::~MetalClaw() {}
 
 bool MetalClaw::checkValidity(Pokemon * defender) {return true;}
 void MetalClaw::primaryEffects(AttackResults * results) {}
-void MetalClaw::secondaryEffects(AttackResults * results) {}
+void MetalClaw::secondaryEffects(AttackResults * results)
+{
+	// 10% chance of increasing attack one stage
+	double chanceValue = (rand() % 100) + 1;
+	if (chanceValue <= 10)
+	{
+		Stat attack = ATK;
+		int numStages = 1;
+		results->attacker->onStatChange(&attack, &numStages, results->attacker);
+	}
+}

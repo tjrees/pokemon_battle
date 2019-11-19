@@ -162,6 +162,8 @@ bool Battle::checkFaintedPokemon(bool endTurn)
 		if (trainer0->m_party[trainer0->m_activePokemon]->m_status == FNT &&
 			trainer1->m_party[trainer1->m_activePokemon]->m_status == FNT)
 		{
+			std::cout << trainer0->m_name << "'s " << trainer0->m_party[trainer0->m_activePokemon]->m_name << " fainted!\n";
+			std::cout << trainer1->m_name << "'s " << trainer1->m_party[trainer1->m_activePokemon]->m_name << " fainted!\n";
 			trainer0->checkHealth();
 			trainer1->checkHealth();
 			if (!trainer0->m_canBattle || !trainer1->m_canBattle)
@@ -181,6 +183,7 @@ bool Battle::checkFaintedPokemon(bool endTurn)
 		// Trainer 0 switches if their pokemon fainted.
 		else if (trainer0->m_party[trainer0->m_activePokemon]->m_status == FNT)
 		{
+			std::cout << trainer0->m_name << "'s " << trainer0->m_party[trainer0->m_activePokemon]->m_name << " fainted!\n";
 			trainer0->checkHealth();
 			if (!trainer0->m_canBattle)
 			{
@@ -196,6 +199,7 @@ bool Battle::checkFaintedPokemon(bool endTurn)
 		// Trainer 1 switches if their pokemon fainted.
 		else
 		{
+			std::cout << trainer1->m_name << "'s " << trainer1->m_party[trainer1->m_activePokemon]->m_name << " fainted!\n";
 			trainer1->checkHealth();
 			if (!trainer1->m_canBattle)
 			{
@@ -419,8 +423,8 @@ static void moveUse(Move * movePtr, Pokemon * attacker, Pokemon * defender)
 	else 
 	{
 		double modifiedAccuracy = modifyAccuracy(movePtr->m_accuracy, attacker->m_accStage, defender->m_evaStage);
-		int hitValue = (rand() % 100) + 1;
-		if ((double) hitValue <= modifiedAccuracy)
+		double hitValue = (rand() % 100) + 1;
+		if (hitValue <= modifiedAccuracy)
 		{
 			// Hits if the random value is <= to the accuracy.
 			hit = true;
@@ -449,6 +453,8 @@ static void moveUse(Move * movePtr, Pokemon * attacker, Pokemon * defender)
 	if (movePtr->m_moveType == move_Attack)
 	{
 		Attack * attackPtr = (Attack *) movePtr;
+		results->contact = true;
+		results->attackType = attackPtr->m_attackType;
 		results->nullified = false;
 		results->additional = 1.0;
 		// Calculate effectiveness. If the attack is ineffective, no primary
@@ -534,7 +540,7 @@ static void moveUse(Move * movePtr, Pokemon * attacker, Pokemon * defender)
 	// Run primary effects
 	movePtr->primaryEffects(results);
 
-	if (movePtr->m_moveType == move_Attack)
+	if (movePtr->m_moveType == move_Attack && results->totalDamage != 0)
 	{
 		// run secondary effects
 		Attack * attackPtr = (Attack *) movePtr;

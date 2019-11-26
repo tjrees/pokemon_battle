@@ -99,9 +99,13 @@ std::string genderAsString(Gender input)
 	{
 		return "Male";
 	}
-	else
+	else if (input == Female)
 	{
 		return "Female";
+	}
+	else // Genderless
+	{
+		return "";
 	}
 }
 

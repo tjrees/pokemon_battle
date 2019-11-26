@@ -47,7 +47,6 @@ public:
 	bool m_oneTime; // If this move is a one time move, it will be deleted after use.
 
 	void print();
-	virtual bool checkValidity(Pokemon * defender) = 0;
 	virtual void primaryEffects(AttackResults * results) = 0;
 
 };
@@ -59,7 +58,6 @@ class Status : public Move
 public:
 	Status(std::string name_in, Type type_in, int maxPP_in, int PP_in, int accuracy_in, bool oneTime_in, int priority_in);
 	virtual ~Status() = 0;
-	virtual bool checkValidity(Pokemon * defender) = 0;
 	virtual void primaryEffects(AttackResults * results) = 0;
 
 
@@ -78,7 +76,6 @@ public:
 	bool m_contact; // Tells if the attack makes contact with the opponent
 	bool m_highCritical; // Tells if the attack has a high critical hit ratio
 
-	virtual bool checkValidity(Pokemon * defender) = 0;
 	virtual void primaryEffects(AttackResults * results) = 0;
 	virtual void secondaryEffects(AttackResults * results) = 0; // Only attacks have secondary effects
 };
@@ -97,6 +94,7 @@ struct AttackResults
 	bool contact;
 	AttackType attackType;
 
+	Move * movePtr;
 
 	Pokemon * attacker;
 	Pokemon * defender;

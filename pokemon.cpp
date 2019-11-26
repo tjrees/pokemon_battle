@@ -12,7 +12,8 @@ Pokemon::Pokemon(std::string name_in, int level_in, Gender gender_in, Type type1
 	m_type1(type1_in), m_type2(type2_in), m_ability(ability_in), m_heldItem(nullptr), m_status(OK),
 	m_baseHp(hp_in), m_baseAtk(atk_in), m_baseDef(def_in), m_baseSpAtk(spAtk_in), 
 	m_baseSpDef(spDef_in), m_baseSpd(spd_in), m_atkStage(0), m_defStage(0), m_spAtkStage(0), 
-	m_spDefStage(0), m_spdStage(0), m_accStage(0), m_evaStage(0), m_trainer(nullptr), m_turnsIn(0)
+	m_spDefStage(0), m_spdStage(0), m_accStage(0), m_evaStage(0), m_trainer(nullptr), m_turnsIn(0),
+	m_sleepCounter(0)
 {
 	this->m_maxHp = this->calcHp();
 	this->m_hp = this->m_maxHp;
@@ -155,6 +156,12 @@ void Pokemon::onTurnEnd()
 	{
 		m_heldItem->onTurnEnd();
 	}
+
+	if (m_status == SLP)
+	{
+		m_sleepCounter++;
+	}
+
 	int statusDamage = 0;
 	if (m_status == BRN || m_status == PSN)
 	{
@@ -197,7 +204,7 @@ void Pokemon::onTurnEnd()
 void Pokemon::onAttack(AttackResults * results)
 {
 	// A burn status halves the afflicted pokemon's attack
-	if (m_status == BRN && results->attackType == Physical)
+	if (m_status == BRN && results->movePtr->attackType == Physical)
 	{
 		results->additional *= 0.5;
 	}
@@ -221,6 +228,14 @@ void Pokemon::onAttacked(AttackResults * results)
 	{
 		m_heldItem->onAttacked(results);
 	}
+
+	// Damaging fire-type attacks will freeze a frozen pokemon
+	if (m_status == FRZ && results->movePtr->m_type == Fire && results->movePtr->m_moveType == move_Attack)
+	{
+		StatusEffect okStatus = OK;
+		onStatusChange(okStatus, results->attacker);
+	}
+
 	// Calculate the total damage dealt by the attack
 	if (results->critical > 1)
 	{
@@ -439,12 +454,69 @@ void Pokemon::onStatusChange(StatusEffect * statusEffect, Pokemon * other)
 			std::cout << m_name << " went to sleep!\n";
 			break;
 		}
-		default:
+		case FRZ:
 		{
 			std::cout << m_name << " was frozen solid!\n";
+			break;
+		}
+		default:
+		{
+			switch(m_status)
+			{
+				case PAR:
+				{
+					std::cout << m_name << " was cured of its paralysis!\n";
+					break;
+				}
+				case PSN:
+				{
+					std::cout << m_name << " was cured of its poison!\n";
+					break;
+				}
+				case TOX:
+				{
+					std::cout << m_name << " was cured of its poison!\n";
+					break;
+				}
+				case BRN:
+				{
+					std::cout << m_name << " was cured of its burn!\n";
+					break;
+				}
+				case SLP:
+				{
+					std::cout << m_name << " woke up!\n";
+					break;
+				}
+				case FRZ:
+				{
+					std::cout << m_name << " thawed out!\n";
+					break;
+				}
+				default: {}
+			}
 		}
 	}
 	m_status = *statusEffect;
+}
+
+void Pokemon::onRecoilDamage(int * recoilDamage)
+{
+	if (m_ability != nullptr)
+	{
+		m_ability->onRecoilDamage(recoilDamage);
+	}
+	if (m_heldItem != nullptr)
+	{
+		m_heldItem->onRecoilDamage(recoilDamage);
+	}
+	if (recoilDamage > m_hp)
+	{
+		recoilDamage = m_hp;
+		m_status = FNT;
+	}
+	m_hp -= recoilDamage;
+	std::cout << m_name << " is damaged by recoil!\n";
 }
 
 bool Pokemon::ppAvailable()
@@ -480,6 +552,94 @@ int Pokemon::determineSpeed()
 		speed /= 4.0;
 	}
 	return speed;
+}
+
+// Determines if the pokemon can move this turn.
+bool Pokemon::canMove(Move * moveUsed)
+{
+	if (m_status == OK)
+	{
+		return true;
+	}
+	// Check random chance status effects
+	double moveValue = (rand() % 100) + 1;
+	if (m_status == PAR)
+	{
+		if (moveValue <= 75)
+		{
+			return true;
+		}
+		else
+		{
+			std::cout << m_name << " is fully paralyzed. It can't move!\n";
+		}
+	}
+	else if (m_status == SLP)
+	{
+		if (m_sleepCounter == 0)
+		{
+			std::cout << m_name << " is fast asleep.\n";
+			return false;
+		}
+		else if (m_sleepCounter == 1)
+		{
+			if (moveValue < 33.3333)
+			{
+				StatusEffect okStatus = OK;
+				onStatusChange(&okStatus, nullptr);
+				m_sleepCounter = 0;
+				return true;
+			}
+			else
+			{
+				std::cout << m_name << " is fast asleep.\n";
+				return false;
+			}
+		}
+		else if (m_sleepCounter == 2)
+		{
+			if (moveValue < 50)
+			{
+				StatusEffect okStatus = OK;
+				onStatusChange(&okStatus, nullptr);
+				m_sleepCounter = 0;
+				return true;
+			}
+			else
+			{
+				std::cout << m_name << " is fast asleep.\n";
+				return false;
+			}
+		}
+		else
+		{
+			StatusEffect okStatus = OK;
+			onStatusChange(&okStatus, nullptr);
+			m_sleepCounter = 0;
+			return true;
+		}
+	}
+	else if (m_status == FRZ)
+	{
+		if (moveUsed->m_type == Fire && moveUsed->m_moveType == move_Attack)
+		{
+			StatusEffect okStatus = OK;
+			onStatusChange(&okStatus, nullptr);
+			return true;
+		}
+		else if (moveValue <= 20)
+		{
+			StatusEffect okStatus = OK;
+			onStatusChange(&okStatus, nullptr);
+			return true;
+		}
+		else
+		{
+			std::cout << m_name << " is frozen solid!\n";
+			return false;
+		}
+	}
+	return true;
 }
 
 

@@ -24,6 +24,7 @@ public:
 	virtual void onTakingContact(AttackResults * results) = 0;
 	virtual void onStatChange(Stat * statChanged, int * numStages, Pokemon * other) = 0;
 	virtual void onStatusChange(StatusEffect * statusEffect, Pokemon * other) = 0;
+	virtual void onRecoilDamage(int * recoilDamage);
 
 	// Print for debugging and command line output
 	void print();

@@ -397,25 +397,24 @@ static int modifyDamageDenominator(int attackStage, int defenseStage)
 	return denominator;
 }
 
-// TODO: determine how to do all of this...
-// TODO: split function. This is getting to be a monster
+// Goes through the process of using a move for a single pokemon.
 static void moveUse(Move * movePtr, Pokemon * attacker, Pokemon * defender)
 {
-	// Each use of a move will decrement PP, whether it fails or not.
-	movePtr->m_PP--;
-	std::cout << attacker->m_name << " used " << movePtr->m_name << "!\n";
-	// First see if the attack is valid to use (e.g. cannot heal while at full health, cannot paralyze a sleeping pokemon)
-	bool valid = movePtr->checkValidity(defender);
-	// Return if the move fails
-	if (!valid)
+	// Determine if the pokemon can move
+	bool canMove = attacker->canMove(movePtr);
+	if (!canMove)
 	{
 		if (movePtr->m_oneTime)
 		{
 			delete movePtr;
 		}
-		std::cout << "But it failed!\n";
 		return;
 	}
+
+	// Each use of a move will decrement PP, whether it fails or not.
+	movePtr->m_PP--;
+	std::cout << attacker->m_name << " used " << movePtr->m_name << "!\n";
+
 	// Use accuracy to determine if this move hits
 	bool hit = false;
 	if (movePtr->m_accuracy == -1)
@@ -448,13 +447,12 @@ static void moveUse(Move * movePtr, Pokemon * attacker, Pokemon * defender)
 	results->additional = 1.0;
 	results->unmodifiedDamage = 0.0;
 	results->totalDamage = 0.0;
+	results->movePtr = movePtr;
 
 	// Only assess damage if the move is an attack
 	if (movePtr->m_moveType == move_Attack)
 	{
 		Attack * attackPtr = (Attack *) movePtr;
-		results->contact = true;
-		results->attackType = attackPtr->m_attackType;
 		results->nullified = false;
 		results->additional = 1.0;
 		// Calculate effectiveness. If the attack is ineffective, no primary

@@ -5,6 +5,17 @@
 #include "action.h"
 #include "move_library.h"
 
+// Checks if the string is a nonnegative integer
+static bool isInt(const std::string & str)
+{
+	auto it = str.begin();
+	while (it != str.end() & std::isdigit(*it))
+	{
+		++it;
+	}
+	return (!str.empty() && it != str.end());
+}
+
 
 Trainer::Trainer(std::string trainerName_in) : m_name(trainerName_in), m_activePokemon(-1), m_canBattle(true)
 {
@@ -23,16 +34,26 @@ Trainer::~Trainer()
 
 int Trainer::choosePokemon()
 {
-	std::cout << m_name << ", choose a Pokemon.\n";
 	int chosen = -1;
 	for (int i = 0; i < m_party.size(); i++)
 	{
 		std::cout << "[" << i << "]\n";
 		m_party[i]->print();
 	}
+	std::cout << m_name << ", choose a Pokemon.\n";
 	while (chosen == -1)
 	{
-		std::cin >> chosen;
+		std::getline(sdg::cin, input)
+		input = input.substr(0, input.find('#'));
+		if (!isInt(input))
+		{
+			chosen = -1;
+		}
+		else
+		{
+			chosen = sdt::stoi(input);
+		}
+
 		if (chosen >= 0 && chosen < m_party.size())
 		{
 			if (chosen == m_activePokemon)
@@ -63,7 +84,17 @@ Action * Trainer::chooseAction()
 	int chosen = -1;
 	while (chosen == -1)
 	{
-		std::cin >> chosen;
+		std::getline(sdg::cin, input)
+		input = input.substr(0, input.find('#'));
+		if (!isInt(input))
+		{
+			chosen = -1;
+		}
+		else
+		{
+			chosen = sdt::stoi(input);
+		}
+		
 		if (chosen != 0 && chosen != 1)
 		{
 			std::cout << "Invalid choice!\n";
@@ -110,7 +141,17 @@ Action * Trainer::chooseAction()
 		chosen = -1;
 		while (chosen == -1)
 		{
-			std::cin >> chosen;
+			std::getline(sdg::cin, input)
+			input = input.substr(0, input.find('#'));
+			if (!isInt(input))
+			{
+				chosen = -1;
+			}
+			else
+			{
+				chosen = sdt::stoi(input);
+			}
+
 			if (chosen < 0 || chosen >= 4)
 			{
 				std::cout << "Invalid index. Choose a move between 0 and 3.\n";

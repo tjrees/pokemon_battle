@@ -66,7 +66,8 @@ std::string attackTypeAsString(AttackType input);
 typedef enum Gender
 {
 	Male,
-	Female
+	Female,
+	None
 } Gender;
 
 std::string genderAsString(Gender input);

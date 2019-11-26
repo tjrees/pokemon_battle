@@ -63,6 +63,8 @@ public:
 
 	// Counts number of turns this pokemon has been switched in
 	int m_turnsIn;
+	// Counts number of turns this pokemon has been asleep
+	int m_sleepCounter;
 
 	int calcHp();
 	int calcStat(int base);
@@ -80,8 +82,10 @@ public:
 	void onTakingContact(AttackResults * results);
 	void onStatChange(Stat * statChanged, int * numStages, Pokemon * other);
 	void onStatusChange(StatusEffect * statusEffect, Pokemon * other);
+	void onRecoilDamage(int * recoilDamage);
 	bool ppAvailable();
 	int determineSpeed();
+	bool canMove(Move * moveUsed);
 
 	void print();
 	void battlePrint();

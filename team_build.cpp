@@ -10,12 +10,15 @@
 
 Trainer * createTrainer(int trainerIdx)
 {
-	std::string trainerName;
+	std::string input;
 
 	std::cout << "Trainer " << trainerIdx << ": What is your name?\n";
-	std::cin >> trainerName;
+	std::getline(std::cin, input);
 
-	Trainer * currentTrainer = new Trainer(trainerName);
+	int commentStart = input.find('#');
+	input = input.substr(0, commentStart);
+
+	Trainer * currentTrainer = new Trainer(input);
 
 	//TODO: Prompt to build team
 	if (trainerIdx == 0)

@@ -36,9 +36,9 @@ Status::~Status() {}
 // Most specific level implemented in this file. The listed parameters fill Attack-specific
 // values and the rest are used to call the Move constructor
 Attack::Attack(std::string name_in, Type type_in, int maxPP_in, int PP_in, int accuracy_in, 
-	AttackType attackType_in, int power_in, bool contact_in, bool oneTime_in, int priority_in)
+	AttackType attackType_in, int power_in, bool contact_in, bool highCritical_in, bool oneTime_in, int priority_in)
 	: Move(name_in, type_in, move_Attack, maxPP_in, PP_in, accuracy_in, oneTime_in, priority_in), 
-	m_attackType(attackType_in), m_power(power_in), m_contact(contact_in) {}
+	m_attackType(attackType_in), m_power(power_in), m_contact(contact_in), m_highCritical(highCritical_in) {}
 Attack::~Attack() {}
 
 // Print fuction for a move. Prints the name, type, pp, and accuracy. Prints power

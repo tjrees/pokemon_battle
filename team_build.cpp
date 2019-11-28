@@ -20,36 +20,125 @@ Trainer * createTrainer(int trainerIdx)
 
 	Trainer * currentTrainer = new Trainer(input);
 
-	//TODO: Prompt to build team
 	if (trainerIdx == 0)
 	{
-		// Charmander
-		Pokemon * charmander = new Charmander(15, Male);
-		Move * growl = new Growl();
-		Move * scratch = new Scratch();
-		Move * ember = new Ember();
-		Move * metalClaw = new MetalClaw();
-		bool result = charmander->learnMove(growl);
-		result = charmander->learnMove(scratch);
-		result = charmander->learnMove(ember);
-		result = charmander->learnMove(metalClaw);
-		charmander->m_trainer = currentTrainer;
-		currentTrainer->m_party.push_back(charmander);
+		// Trainer 0's team:
+		// Arcanine
+		// Snorlax
+		// Steelix
+		// Heracross
+		// Gardevoir
+		// Walrein
+
+		Pokemon * arcanine = new Arcanine(100, Male);
+		Pokemon * snorlax = new Snorlax(100, Male);
+		Pokemon * steelix = new Steelix(100, Male);
+		Pokemon * heracross = new Heracross(100, Female);
+		Pokemon * gardevoir = new Gardevoir(100, Female);
+		Pokemon * walrein = new Walrein(100, Female);
+
+		arcanine->learnMove(new FireBlast());
+		arcanine->learnMove(new WildCharge());
+		arcanine->learnMove(new Crunch());
+		arcanine->learnMove(new ExtremeSpeed());
+
+		snorlax->learnMove(new Curse());
+		snorlax->learnMove(new BodySlam());
+		snorlax->learnMove(new Earthquake());
+		snorlax->learnMove(new IcePunch());
+
+		steelix->learnMove(new IronTail());
+		steelix->learnMove(new Earthquake());
+		steelix->learnMove(new Toxic());
+		steelix->learnMove(new Roar());
+
+		heracross->learnMove(new CloseCombat());
+		heracross->learnMove(new Megahorn());
+		heracross->learnMove(new Earthquake());
+		heracross->learnMove(new AerialAce());
+
+		gardevoir->learnMove(new CalmMind());
+		gardevoir->learnMove(new StoredPower());
+		gardevoir->learnMove(new Moonblast());
+		gardevoir->learnMove(new DoubleTeam());
+
+		walrein->learnMove(new IceBeam());
+		walrein->learnMove(new Surf());
+		walrein->learnMove(new Fissure());
+		walrein->learnMove(new Crunch());
+
+		arcanine->m_trainer = currentTrainer;
+		currentTrainer->m_party.push_back(arcanine);
+		snorlax->m_trainer = currentTrainer;
+		currentTrainer->m_party.push_back(snorlax);
+		steelix->m_trainer = currentTrainer;
+		currentTrainer->m_party.push_back(steelix);
+		heracross->m_trainer = currentTrainer;
+		currentTrainer->m_party.push_back(heracross);
+		gardevoir->m_trainer = currentTrainer;
+		currentTrainer->m_party.push_back(gardevoir);
+		walrein->m_trainer = currentTrainer;
+		currentTrainer->m_party.push_back(walrein);
 	}
 	else
 	{
-		// Pikachu
-		Pokemon * pikachu = new Pikachu(15, Female);
-		Move * growl = new Growl();
-		Move * thunderShock = new ThunderShock();
-		Move * tailWhip = new TailWhip();
-		Move * quickAttack = new QuickAttack();
-		pikachu->learnMove(growl);
-		pikachu->learnMove(thunderShock);
-		pikachu->learnMove(tailWhip);
-		pikachu->learnMove(quickAttack);
-		pikachu->m_trainer = currentTrainer;
-		currentTrainer->m_party.push_back(pikachu);
+		// Trainer 1's team:
+		// Gengar
+		// Aerodactyl
+		// Houndoom
+		// Kingdra
+		// Breloom
+		// Manectric
+
+		Pokemon * gengar = new Gengar(100, Male);
+		Pokemon * aerodactyl = new Aerodactyl(100, Male);
+		Pokemon * houndoom = new Houndoom(100, Male);
+		Pokemon * kingdra = new Kingdra(100, Female);
+		Pokemon * breloom = new Breloom(100, Female);
+		Pokemon * manectric = new Manectric(100, Female);
+
+		gengar->learnMove(new ShadowBall());
+		gengar->learnMove(new SludgeBomb());
+		gengar->learnMove(new Thunderbolt());
+		gengar->learnMove(new WillOWisp());
+
+		aerodactyl->learnMove(new StoneEdge());
+		aerodactyl->learnMove(new Earthquake());
+		aerodactyl->learnMove(new Roost());
+		aerodactyl->learnMove(new Fly());
+
+		houndoom->learnMove(new NastyPlot());
+		houndoom->learnMove(new Flamethrower());
+		houndoom->learnMove(new DarkPulse());
+		houndoom->learnMove(new SolarBeam());
+
+		kingdra->learnMove(new DracoMeteor());
+		kingdra->learnMove(new Waterfall());
+		kingdra->learnMove(new DragonDance());
+		kingdra->learnMove(new HydroPump());
+
+		breloom->learnMove(new SwordsDance());
+		breloom->learnMove(new MachPunch());
+		breloom->learnMove(new SeedBomb());
+		breloom->learnMove(new DrainPunch());
+
+		manectric->learnMove(new Thunderbolt());
+		manectric->learnMove(new Flamethrower());
+		manectric->learnMove(new ThunderWave());
+		manectric->learnMove(new ChargeBeam());
+
+		gengar->m_trainer = currentTrainer;
+		currentTrainer->m_party.push_back(gengar);
+		aerodactyl->m_trainer = currentTrainer;
+		currentTrainer->m_party.push_back(aerodactyl);
+		houndoom->m_trainer = currentTrainer;
+		currentTrainer->m_party.push_back(houndoom);
+		kingdra->m_trainer = currentTrainer;
+		currentTrainer->m_party.push_back(kingdra);
+		breloom->m_trainer = currentTrainer;
+		currentTrainer->m_party.push_back(breloom);
+		manectric->m_trainer = currentTrainer;
+		currentTrainer->m_party.push_back(manectric);
 	}
 	return currentTrainer;
 }

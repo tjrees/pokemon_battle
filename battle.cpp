@@ -205,7 +205,7 @@ bool Battle::checkFaintedPokemon(bool endTurn)
 			{
 				return true;
 			}
-			trainer1->m_activePokemon = trainer0->choosePokemon();
+			trainer1->m_activePokemon = trainer1->choosePokemon();
 			if (!endTurn)
 			{
 				trainer0->m_party[trainer0->m_activePokemon]->onTurnEnd();
@@ -254,7 +254,7 @@ void Battle::runAction(Action * actionPtr, Trainer * user, Trainer * other)
 	{
 		SwitchPokemon * switchPtr = (SwitchPokemon *) actionPtr;
 		user->m_party[user->m_activePokemon]->onSwitchOut();
-		user->m_activePokemon = switchPtr->m_switchOutIdx;
+		user->m_activePokemon = switchPtr->m_switchInIdx;
 		user->m_party[user->m_activePokemon]->onSwitchIn();
 	}
 	else if (actionPtr->m_actionType == action_Move)

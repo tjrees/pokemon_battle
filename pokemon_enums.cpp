@@ -31,6 +31,8 @@ std::string typeAsString(Type input)
 			return "Rock";
 		case Ghost:
 			return "Ghost";
+		case Ice:
+			return "Ice";
 		case Dragon:
 			return "Dragon";
 		case Dark:

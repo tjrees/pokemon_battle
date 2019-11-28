@@ -31,11 +31,6 @@ Heracross::Heracross(int level_in, Gender gender_in)
 : Pokemon("Heracross", level_in, gender_in, Bug, Fighting, nullptr, 80, 125, 75, 40, 95, 85){}
 Heracross::~Heracross() {}
 
-// Heracross
-Heracross::Heracross(int level_in, Gender gender_in) 
-: Pokemon("Heracross", level_in, gender_in, Bug, Fighting, nullptr, 80, 125, 75, 40, 95, 85){}
-Heracross::~Heracross() {}
-
 // Gardevoir
 Gardevoir::Gardevoir(int level_in, Gender gender_in) 
 : Pokemon("Gardevoir", level_in, gender_in, Psychic, Fairy, nullptr, 68, 65, 65, 125, 115, 80){}

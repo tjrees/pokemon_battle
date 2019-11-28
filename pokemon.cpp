@@ -204,9 +204,12 @@ void Pokemon::onTurnEnd()
 void Pokemon::onAttack(AttackResults * results)
 {
 	// A burn status halves the afflicted pokemon's attack
-	if (m_status == BRN && results->movePtr->attackType == Physical)
+	if (results->movePtr->m_moveType == move_Attack)
 	{
-		results->additional *= 0.5;
+		if (m_status == BRN && ((Attack*) (results->movePtr))->m_attackType == Physical)
+		{
+			results->additional *= 0.5;
+		}
 	}
 	if (m_ability != nullptr)
 	{
@@ -233,7 +236,7 @@ void Pokemon::onAttacked(AttackResults * results)
 	if (m_status == FRZ && results->movePtr->m_type == Fire && results->movePtr->m_moveType == move_Attack)
 	{
 		StatusEffect okStatus = OK;
-		onStatusChange(okStatus, results->attacker);
+		onStatusChange(&okStatus, results->attacker);
 	}
 
 	// Calculate the total damage dealt by the attack
@@ -510,12 +513,12 @@ void Pokemon::onRecoilDamage(int * recoilDamage)
 	{
 		m_heldItem->onRecoilDamage(recoilDamage);
 	}
-	if (recoilDamage > m_hp)
+	if (*recoilDamage > m_hp)
 	{
-		recoilDamage = m_hp;
+		*recoilDamage = m_hp;
 		m_status = FNT;
 	}
-	m_hp -= recoilDamage;
+	m_hp -= *recoilDamage;
 	std::cout << m_name << " is damaged by recoil!\n";
 }
 

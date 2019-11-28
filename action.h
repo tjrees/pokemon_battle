@@ -69,7 +69,7 @@ class Attack : public Move
 {
 public:
 	Attack(std::string name_in, Type type_in, int maxPP_in, int PP_in, int accuracy_in, AttackType attackType_in, 
-		int power_in, bool contact_in, bool oneTime_in, int priority_in);
+		int power_in, bool contact_in, bool highCritical_in, bool oneTime_in, int priority_in);
 	virtual ~Attack() = 0;
 	AttackType m_attackType; // Tells if the move is physical or special
 	int m_power; // Base power of the attack, determines how much damage it will do

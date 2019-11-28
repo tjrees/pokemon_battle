@@ -8,12 +8,12 @@
 // Checks if the string is a nonnegative integer
 static bool isInt(const std::string & str)
 {
-	auto it = str.begin();
-	while (it != str.end() & std::isdigit(*it))
+	int idx = 0;
+	while(idx < str.size() && std::isdigit(str[idx]))
 	{
-		++it;
+		++idx;
 	}
-	return (!str.empty() && it != str.end());
+	return (!str.empty() && idx == str.size());
 }
 
 
@@ -34,16 +34,17 @@ Trainer::~Trainer()
 
 int Trainer::choosePokemon()
 {
+	std::string input;
 	int chosen = -1;
 	for (int i = 0; i < m_party.size(); i++)
 	{
 		std::cout << "[" << i << "]\n";
-		m_party[i]->print();
+		m_party[i]->battlePrint();
 	}
 	std::cout << m_name << ", choose a Pokemon.\n";
 	while (chosen == -1)
 	{
-		std::getline(sdg::cin, input)
+		std::getline(std::cin, input);
 		input = input.substr(0, input.find('#'));
 		if (!isInt(input))
 		{
@@ -51,7 +52,7 @@ int Trainer::choosePokemon()
 		}
 		else
 		{
-			chosen = sdt::stoi(input);
+			chosen = std::stoi(input);
 		}
 
 		if (chosen >= 0 && chosen < m_party.size())
@@ -79,12 +80,14 @@ int Trainer::choosePokemon()
 
 Action * Trainer::chooseAction()
 {
+	std::string input;
+
 	std::cout << m_name << ", choose an action.\n";
 	std::cout << "[0] Fight\n[1] Switch\n";
 	int chosen = -1;
 	while (chosen == -1)
 	{
-		std::getline(sdg::cin, input)
+		std::getline(std::cin, input);
 		input = input.substr(0, input.find('#'));
 		if (!isInt(input))
 		{
@@ -92,7 +95,7 @@ Action * Trainer::chooseAction()
 		}
 		else
 		{
-			chosen = sdt::stoi(input);
+			chosen = std::stoi(input);
 		}
 		
 		if (chosen != 0 && chosen != 1)
@@ -141,7 +144,7 @@ Action * Trainer::chooseAction()
 		chosen = -1;
 		while (chosen == -1)
 		{
-			std::getline(sdg::cin, input)
+			std::getline(std::cin, input);
 			input = input.substr(0, input.find('#'));
 			if (!isInt(input))
 			{
@@ -149,7 +152,7 @@ Action * Trainer::chooseAction()
 			}
 			else
 			{
-				chosen = sdt::stoi(input);
+				chosen = std::stoi(input);
 			}
 
 			if (chosen < 0 || chosen >= 4)

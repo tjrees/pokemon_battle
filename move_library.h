@@ -314,6 +314,15 @@ public:
 	virtual void primaryEffects(AttackResults * results); // Restores half of max HP
 };
 
+class Fly : public Attack
+{
+public:
+	Fly();
+	~Fly();
+	virtual void primaryEffects(AttackResults * results); // None
+	virtual void secondaryEffects(AttackResults * results); // None
+};
+
 class NastyPlot : public Status
 {
 public:

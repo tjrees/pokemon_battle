@@ -22,6 +22,8 @@ Pokemon::Pokemon(std::string name_in, int level_in, Gender gender_in, Type type1
 	this->m_spAtk = this->calcStat(this->m_baseSpAtk);
 	this->m_spDef = this->calcStat(this->m_baseSpDef);
 	this->m_spd = this->calcStat(this->m_baseSpd);
+	this->m_ability = ability_in;
+	ability_in->m_user = this;
 
 	// TODO: Reconsider how to initalize moves
 	for (int i = 0; i < 4; i++)
@@ -173,6 +175,11 @@ void Pokemon::onTurnEnd()
 		toxDenominator /= pow(2, m_turnsIn - 1);
 		statusDamage = m_maxHp / toxDenominator;
 	}
+	if (m_ability != nullptr)
+	{
+		m_ability->onStatusDamage(&statusDamage);
+	}
+
 	if (statusDamage != 0)
 	{
 		if (statusDamage >= m_hp)
@@ -246,19 +253,18 @@ void Pokemon::onAttacked(AttackResults * results)
 	}
 	if (results->totalDamage == 0)
 	{
-		if (results->nullified)
-		{
-			results->totalDamage = 0;
-		}
-		else
-		{
-			results->totalDamage = 
-				std::round((results->effectiveness * results->stab * results->critical * 
-				results->additional * results->unmodifiedDamage * 
-				results->modifiedDamageNumerator) / 
-				results->modifiedDamageDenominator);;
-		}
-	}	
+		results->totalDamage = 
+			std::round((results->effectiveness * results->stab * results->critical * 
+			results->additional * results->unmodifiedDamage * 
+			results->modifiedDamageNumerator) / 
+			results->modifiedDamageDenominator);
+	}
+
+	if (m_ability != nullptr)
+	{
+		m_ability->onDamaged(results);
+	}
+
 	// Apply the damage from the attack
 	if (results->totalDamage >= m_hp)
 	{
@@ -270,7 +276,10 @@ void Pokemon::onAttacked(AttackResults * results)
 	{
 		m_hp -= results->totalDamage;
 	}
-	std::cout << m_name << " lost " << (((double) results->totalDamage) / ((double) m_maxHp) * 100.0) << " percent of its health!\n";
+	if (results->totalDamage != 0)
+	{
+		std::cout << m_name << " lost " << (((double) results->totalDamage) / ((double) m_maxHp) * 100.0) << " percent of its health!\n";
+	}
 }
 
 void Pokemon::onMakingContact(AttackResults * results)
@@ -575,6 +584,7 @@ bool Pokemon::canMove(Move * moveUsed)
 		else
 		{
 			std::cout << m_name << " is fully paralyzed. It can't move!\n";
+			return false;
 		}
 	}
 	else if (m_status == SLP)

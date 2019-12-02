@@ -17,6 +17,8 @@ public:
 	int m_activePokemon;
 	bool m_canBattle;
 
+	Trainer * m_opponent;
+
 	int choosePokemon();
 	Action * chooseAction();
 	int determineSpeed();

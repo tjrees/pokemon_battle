@@ -190,6 +190,7 @@ bool Battle::checkFaintedPokemon(bool endTurn)
 				return true;
 			}
 			trainer0->m_activePokemon = trainer0->choosePokemon();
+			trainer0->m_party[trainer0->m_activePokemon]->onSwitchIn();
 			if (!endTurn)
 			{
 				trainer1->m_party[trainer1->m_activePokemon]->onTurnEnd();
@@ -206,6 +207,7 @@ bool Battle::checkFaintedPokemon(bool endTurn)
 				return true;
 			}
 			trainer1->m_activePokemon = trainer1->choosePokemon();
+			trainer1->m_party[trainer1->m_activePokemon]->onSwitchIn();
 			if (!endTurn)
 			{
 				trainer0->m_party[trainer0->m_activePokemon]->onTurnEnd();
@@ -443,7 +445,6 @@ static void moveUse(Move * movePtr, Pokemon * attacker, Pokemon * defender)
 	AttackResults * results = new AttackResults();
 	results->attacker = attacker;
 	results->defender = defender;
-	results->nullified = false;
 	results->additional = 1.0;
 	results->unmodifiedDamage = 0.0;
 	results->totalDamage = 0.0;
@@ -453,20 +454,10 @@ static void moveUse(Move * movePtr, Pokemon * attacker, Pokemon * defender)
 	if (movePtr->m_moveType == move_Attack)
 	{
 		Attack * attackPtr = (Attack *) movePtr;
-		results->nullified = false;
 		results->additional = 1.0;
 		// Calculate effectiveness. If the attack is ineffective, no primary
 		// or secondary effects will occur.
 		results->effectiveness = calculateEffectiveness(movePtr->m_type, defender);
-		if (results->effectiveness == 0)
-		{
-			delete results;
-			if (movePtr->m_oneTime)
-			{
-				delete movePtr;
-			}
-			return;
-		}
 
 		// Calculate STAB (same type attack bonus)
 		results->stab = 1.0;
@@ -507,31 +498,34 @@ static void moveUse(Move * movePtr, Pokemon * attacker, Pokemon * defender)
 		// Run results through attacker callback
 		attacker->onAttack(results);
 
+		// Run results through move damage modifier
+		attackPtr->modifyDamage(results);
+
 		// Run results through defender callback. This will deal damage to the defender
 		defender->onAttacked(results);
 
 		// If contact was made, run contact callback for attacker.
-		if (attackPtr->m_contact)
+		if (results->totalDamage != 0)
 		{
-			attacker->onMakingContact(results);
+			if (attackPtr->m_contact)
+			{
+				attacker->onMakingContact(results);
 
-			// Run contact callback for defender
-			defender->onTakingContact(results);
+				// Run contact callback for defender
+				defender->onTakingContact(results);
+			}
 		}
-
-		if (results->nullified)
+		results->print();
+		if (results->totalDamage == 0)
 		{
 			// If attack is nullified, return from the function.
+
 			delete results;
 			if (movePtr->m_oneTime)
 			{
 				delete movePtr;
 			}
 			return;
-		}
-		else
-		{
-			results->print();
 		}
 	}
 

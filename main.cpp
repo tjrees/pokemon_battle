@@ -32,6 +32,8 @@ int main()
 
 	// initialize and start the battle
 	Battle * battle = new Battle();
+	trainer0->m_opponent = trainer1;
+	trainer1->m_opponent = trainer0;
 	battle->trainer0 = trainer0;
 	battle->trainer1 = trainer1;
 	battle->execute();

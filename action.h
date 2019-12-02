@@ -76,6 +76,7 @@ public:
 	bool m_contact; // Tells if the attack makes contact with the opponent
 	bool m_highCritical; // Tells if the attack has a high critical hit ratio
 
+	virtual void modifyDamage(AttackResults * results) = 0; // For attacks that modify damage before usage
 	virtual void primaryEffects(AttackResults * results) = 0;
 	virtual void secondaryEffects(AttackResults * results) = 0; // Only attacks have secondary effects
 };
@@ -90,7 +91,6 @@ struct AttackResults
 	int modifiedDamageNumerator; // Cleared for certain abilities and items (e.g. Unaware)
 	int modifiedDamageDenominator; // Cleared for critical hits and certain abilities and items (e.g. Unaware)
 	int totalDamage;
-	bool nullified; // Set by the attacked pokemon if the ability or item nullifies the attack (e.g. Sap Sipper, Water Absorb)
 	bool contact;
 	AttackType attackType;
 

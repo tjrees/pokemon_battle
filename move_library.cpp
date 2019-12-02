@@ -10,7 +10,12 @@ Struggle::Struggle()
 : Attack("Struggle", NoneType, 1, 1, 100, Physical, 40, true, false, true, 0) {}
 Struggle::~Struggle() {}
 
-void Struggle::primaryEffects(AttackResults * results) {}
+void Struggle::modifyDamage(AttackResults * results) {}
+void Struggle::primaryEffects(AttackResults * results)
+{
+	int recoilDamage = results->totalDamage / 4.0;
+	results->attacker->onRecoilDamage(&recoilDamage);
+}
 void Struggle::secondaryEffects(AttackResults * results) {}
 
 // ThunderShock
@@ -19,6 +24,7 @@ ThunderShock::ThunderShock()
 
 ThunderShock::~ThunderShock() {}
 
+void ThunderShock::modifyDamage(AttackResults * results) {}
 void ThunderShock::primaryEffects(AttackResults * results) {}
 void ThunderShock::secondaryEffects(AttackResults * results)
 {
@@ -70,6 +76,7 @@ QuickAttack::QuickAttack()
 
 QuickAttack::~QuickAttack() {}
 
+void QuickAttack::modifyDamage(AttackResults * results) {}
 void QuickAttack::primaryEffects(AttackResults * results) {}
 void QuickAttack::secondaryEffects(AttackResults * results) {}
 
@@ -79,6 +86,7 @@ Scratch::Scratch()
 
 Scratch::~Scratch() {}
 
+void Scratch::modifyDamage(AttackResults * results) {}
 void Scratch::primaryEffects(AttackResults * results) {}
 void Scratch::secondaryEffects(AttackResults * results) {}
 
@@ -88,6 +96,7 @@ Ember::Ember()
 
 Ember::~Ember() {}
 
+void Ember::modifyDamage(AttackResults * results) {}
 void Ember::primaryEffects(AttackResults * results) {}
 void Ember::secondaryEffects(AttackResults * results)
 {
@@ -109,6 +118,7 @@ MetalClaw::MetalClaw()
 
 MetalClaw::~MetalClaw() {}
 
+void MetalClaw::modifyDamage(AttackResults * results) {}
 void MetalClaw::primaryEffects(AttackResults * results) {}
 void MetalClaw::secondaryEffects(AttackResults * results)
 {
@@ -128,6 +138,7 @@ FireBlast::FireBlast()
 
 FireBlast::~FireBlast() {}
 
+void FireBlast::modifyDamage(AttackResults * results) {}
 void FireBlast::primaryEffects(AttackResults * results) {}
 void FireBlast::secondaryEffects(AttackResults * results)
 {
@@ -151,6 +162,7 @@ WildCharge::WildCharge()
 
 WildCharge::~WildCharge() {}
 
+void WildCharge::modifyDamage(AttackResults * results) {}
 void WildCharge::primaryEffects(AttackResults * results) 
 {
 	int recoilDamage = results->totalDamage / 4.0;
@@ -163,6 +175,8 @@ Crunch::Crunch()
 : Attack("Crunch", Dark, 15, 15, 100, Physical, 80, true, false, false, 0) {}
 
 Crunch::~Crunch() {}
+
+void Crunch::modifyDamage(AttackResults * results) {}
 void Crunch::primaryEffects(AttackResults * results) {}
 void Crunch::secondaryEffects(AttackResults * results)
 {
@@ -180,6 +194,7 @@ ExtremeSpeed::ExtremeSpeed()
 : Attack("Extreme Speed", Normal, 5, 5, 100, Physical, 80, true, false, false, 2) {}
 
 ExtremeSpeed::~ExtremeSpeed() {}
+void ExtremeSpeed::modifyDamage(AttackResults * results) {}
 void ExtremeSpeed::primaryEffects(AttackResults * results) {}
 void ExtremeSpeed::secondaryEffects(AttackResults * results) {}
 
@@ -207,6 +222,7 @@ BodySlam::BodySlam()
 
 BodySlam::~BodySlam() {}
 
+void BodySlam::modifyDamage(AttackResults * results) {}
 void BodySlam::primaryEffects(AttackResults * results) {}
 void BodySlam::secondaryEffects(AttackResults * results)
 {
@@ -227,6 +243,8 @@ Earthquake::Earthquake()
 : Attack("Earthquake", Ground, 10, 10, 100, Physical, 100, false, false, false, 0) {}
 
 Earthquake::~Earthquake() {}
+
+void Earthquake::modifyDamage(AttackResults * results) {}
 void Earthquake::primaryEffects(AttackResults * results) {}
 void Earthquake::secondaryEffects(AttackResults * results) {}
 
@@ -236,6 +254,7 @@ IcePunch::IcePunch()
 
 IcePunch::~IcePunch() {}
 
+void IcePunch::modifyDamage(AttackResults * results) {}
 void IcePunch::primaryEffects(AttackResults * results) {}
 void IcePunch::secondaryEffects(AttackResults * results)
 {
@@ -256,6 +275,7 @@ IronTail::IronTail()
 
 IronTail::~IronTail() {}
 
+void IronTail::modifyDamage(AttackResults * results) {}
 void IronTail::primaryEffects(AttackResults * results) {}
 void IronTail::secondaryEffects(AttackResults * results)
 {
@@ -307,6 +327,7 @@ CloseCombat::CloseCombat()
 
 CloseCombat::~CloseCombat() {}
 
+void CloseCombat::modifyDamage(AttackResults * results) {}
 void CloseCombat::primaryEffects(AttackResults * results) 
 {
 	Stat changed = DEF;
@@ -324,6 +345,7 @@ Megahorn::Megahorn()
 
 Megahorn::~Megahorn() {}
 
+void Megahorn::modifyDamage(AttackResults * results) {}
 void Megahorn::primaryEffects(AttackResults * results) {}
 void Megahorn::secondaryEffects(AttackResults * results) {}
 
@@ -333,6 +355,7 @@ AerialAce::AerialAce()
 
 AerialAce::~AerialAce() {}
 
+void AerialAce::modifyDamage(AttackResults * results) {}
 void AerialAce::primaryEffects(AttackResults * results) {}
 void AerialAce::secondaryEffects(AttackResults * results) {}
 
@@ -357,6 +380,39 @@ StoredPower::StoredPower()
 
 StoredPower::~StoredPower() {}
 
+void StoredPower::modifyDamage(AttackResults * results) 
+{
+	int numStatChanges = 0;
+	if (results->attacker->m_atkStage > 0)
+	{
+		numStatChanges += results->attacker->m_atkStage;
+	}
+	if (results->attacker->m_defStage > 0)
+	{
+		numStatChanges += results->attacker->m_defStage;
+	}
+	if (results->attacker->m_spAtkStage > 0)
+	{
+		numStatChanges += results->attacker->m_spAtkStage;
+	}
+	if (results->attacker->m_spDefStage > 0)
+	{
+		numStatChanges += results->attacker->m_spDefStage;
+	}
+	if (results->attacker->m_spdStage > 0)
+	{
+		numStatChanges += results->attacker->m_spdStage;
+	}
+	if (results->attacker->m_accStage > 0)
+	{
+		numStatChanges += results->attacker->m_accStage;
+	}
+	if (results->attacker->m_evaStage > 0)
+	{
+		numStatChanges += results->attacker->m_evaStage;
+	}
+	results->additional *= (1 + numStatChanges);
+}
 void StoredPower::primaryEffects(AttackResults * results) {}
 void StoredPower::secondaryEffects(AttackResults * results) {}
 
@@ -366,6 +422,7 @@ Moonblast::Moonblast()
 
 Moonblast::~Moonblast() {}
 
+void Moonblast::modifyDamage(AttackResults * results) {}
 void Moonblast::primaryEffects(AttackResults * results) {}
 void Moonblast::secondaryEffects(AttackResults * results)
 {
@@ -396,6 +453,7 @@ IceBeam::IceBeam()
 
 IceBeam::~IceBeam() {}
 
+void IceBeam::modifyDamage(AttackResults * results) {}
 void IceBeam::primaryEffects(AttackResults * results) {}
 void IceBeam::secondaryEffects(AttackResults * results)
 {
@@ -416,6 +474,7 @@ Surf::Surf()
 
 Surf::~Surf() {}
 
+void Surf::modifyDamage(AttackResults * results) {}
 void Surf::primaryEffects(AttackResults * results) {}
 void Surf::secondaryEffects(AttackResults * results) {}
 
@@ -424,6 +483,12 @@ Fissure::Fissure()
 : Attack("Fissure", Ground, 5, 5, 30, Physical, 5, false, false, false, 0) {}
 
 Fissure::~Fissure() {}
+
+void Fissure::modifyDamage(AttackResults * results) 
+{
+	// One hit K.O.
+	results->totalDamage = 9999;
+}
 void Fissure::primaryEffects(AttackResults * results) {}
 void Fissure::secondaryEffects(AttackResults * results) {}
 
@@ -433,6 +498,7 @@ ShadowBall::ShadowBall()
 
 ShadowBall::~ShadowBall() {}
 
+void ShadowBall::modifyDamage(AttackResults * results) {}
 void ShadowBall::primaryEffects(AttackResults * results) {}
 void ShadowBall::secondaryEffects(AttackResults * results)
 {
@@ -451,6 +517,7 @@ SludgeBomb::SludgeBomb()
 
 SludgeBomb::~SludgeBomb() {}
 
+void SludgeBomb::modifyDamage(AttackResults * results) {}
 void SludgeBomb::primaryEffects(AttackResults * results) {}
 void SludgeBomb::secondaryEffects(AttackResults * results)
 {
@@ -475,6 +542,7 @@ Thunderbolt::Thunderbolt()
 
 Thunderbolt::~Thunderbolt() {}
 
+void Thunderbolt::modifyDamage(AttackResults * results) {}
 void Thunderbolt::primaryEffects(AttackResults * results) {}
 void Thunderbolt::secondaryEffects(AttackResults * results)
 {
@@ -523,6 +591,7 @@ StoneEdge::StoneEdge()
 : Attack("Stone Edge", Rock, 5, 5, 80, Physical, 100, false, true, false, 0) {}
 
 StoneEdge::~StoneEdge() {}
+void StoneEdge::modifyDamage(AttackResults * results) {}
 void StoneEdge::primaryEffects(AttackResults * results) {}
 void StoneEdge::secondaryEffects(AttackResults * results) {}
 
@@ -541,7 +610,7 @@ void Roost::primaryEffects(AttackResults * results)
 	int amountHealed = results->attacker->m_maxHp / 2;
 	if (amountHealed + results->attacker->m_hp > results->attacker->m_maxHp)
 	{
-		amountHealed = results->attacker->m_maxHp - amountHealed + results->attacker->m_hp;
+		amountHealed = results->attacker->m_maxHp - results->attacker->m_hp;
 	}
 	results->attacker->m_hp += amountHealed;
 	std::cout << results->attacker->m_name << " regained health!\n";
@@ -552,6 +621,7 @@ Fly::Fly()
 : Attack("Fly", Flying, 15, 15, 90, Physical, 90, true, false, false, 0) {}
 
 Fly::~Fly() {}
+void Fly::modifyDamage(AttackResults * results) {}
 void Fly::primaryEffects(AttackResults * results) {}
 void Fly::secondaryEffects(AttackResults * results) {}
 
@@ -573,6 +643,7 @@ Flamethrower::Flamethrower()
 
 Flamethrower::~Flamethrower() {}
 
+void Flamethrower::modifyDamage(AttackResults * results) {}
 void Flamethrower::primaryEffects(AttackResults * results) {}
 void Flamethrower::secondaryEffects(AttackResults * results)
 {
@@ -596,6 +667,7 @@ DarkPulse::DarkPulse()
 
 DarkPulse::~DarkPulse() {}
 
+void DarkPulse::modifyDamage(AttackResults * results) {}
 void DarkPulse::primaryEffects(AttackResults * results) {}
 void DarkPulse::secondaryEffects(AttackResults * results)
 {
@@ -608,6 +680,7 @@ SolarBeam::SolarBeam()
 
 SolarBeam::~SolarBeam() {}
 
+void SolarBeam::modifyDamage(AttackResults * results) {}
 void SolarBeam::primaryEffects(AttackResults * results) {}
 void SolarBeam::secondaryEffects(AttackResults * results)
 {
@@ -620,6 +693,7 @@ DracoMeteor::DracoMeteor()
 
 DracoMeteor::~DracoMeteor() {}
 
+void DracoMeteor::modifyDamage(AttackResults * results) {}
 void DracoMeteor::primaryEffects(AttackResults * results) 
 {
 	Stat spAtk = SPATK;
@@ -634,6 +708,7 @@ Waterfall::Waterfall()
 
 Waterfall::~Waterfall() {}
 
+void Waterfall::modifyDamage(AttackResults * results) {}
 void Waterfall::primaryEffects(AttackResults * results) {}
 void Waterfall::secondaryEffects(AttackResults * results)
 {
@@ -661,6 +736,7 @@ HydroPump::HydroPump()
 
 HydroPump::~HydroPump() {}
 
+void HydroPump::modifyDamage(AttackResults * results) {}
 void HydroPump::primaryEffects(AttackResults * results) {}
 void HydroPump::secondaryEffects(AttackResults * results) {}
 
@@ -682,6 +758,7 @@ MachPunch::MachPunch()
 
 MachPunch::~MachPunch() {}
 
+void MachPunch::modifyDamage(AttackResults * results) {}
 void MachPunch::primaryEffects(AttackResults * results) {}
 void MachPunch::secondaryEffects(AttackResults * results) {}
 
@@ -691,6 +768,7 @@ SeedBomb::SeedBomb()
 
 SeedBomb::~SeedBomb() {}
 
+void SeedBomb::modifyDamage(AttackResults * results) {}
 void SeedBomb::primaryEffects(AttackResults * results) {}
 void SeedBomb::secondaryEffects(AttackResults * results) {}
 
@@ -700,6 +778,7 @@ DrainPunch::DrainPunch()
 
 DrainPunch::~DrainPunch() {}
 
+void DrainPunch::modifyDamage(AttackResults * results) {}
 void DrainPunch::primaryEffects(AttackResults * results) 
 {
 	int amountHealed = results->totalDamage / 2;
@@ -744,6 +823,7 @@ ChargeBeam::ChargeBeam()
 
 ChargeBeam::~ChargeBeam() {}
 
+void ChargeBeam::modifyDamage(AttackResults * results) {}
 void ChargeBeam::primaryEffects(AttackResults * results) {}
 void ChargeBeam::secondaryEffects(AttackResults * results)
 {

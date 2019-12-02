@@ -2,6 +2,7 @@
 // Implementation of Action class
 #include "action.h"
 #include "pokemon_enums.h"
+#include "pokemon.h"
 #include <iostream>
 #include <cstdlib>
 
@@ -70,21 +71,24 @@ void Move::print()
 
 void AttackResults::print()
 {
-	if (critical > 1.0)
-	{
-		std::cout << "Critical hit!\n";
-	}
 	if (effectiveness == 0.0)
 	{
-		std::cout << "The move had no effect!\n";
+		std::cout << "It didn't affect " << defender->m_name << "!\n";
 	}
-	else if (effectiveness < 1.0)
+	if (totalDamage != 0)
 	{
-		std::cout << "It's not very effective...\n";
-	}
-	else if (effectiveness > 1.0)
-	{
-		std::cout << "It's super effective!\n";
+		if (critical > 1.0)
+		{
+			std::cout << "Critical hit!\n";
+		}
+		if (effectiveness < 1.0)
+		{
+			std::cout << "It's not very effective...\n";
+		}
+		if (effectiveness > 1.0)
+		{
+			std::cout << "It's super effective!\n";
+		}
 	}
 
 }
